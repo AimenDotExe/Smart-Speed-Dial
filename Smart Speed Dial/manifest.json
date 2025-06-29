@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Speed Dial - Custom New Tab",
+  "version": "1.0.0",
+  "description": "A beautiful, customizable speed dial new tab page with drag & drop, bookmark import, and web search functionality.",
+  "author": "Aimen Zaied",
+  "homepage_url": "https://linktr.ee/AimenZaied",
+  
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  
+  "permissions": [
+    "storage",
+    "bookmarks",
+    "history",
+    "contextMenus"
+  ],
+  
+  "icons": {
+    "16": "icons/image.png",
+    "48": "icons/image.png",
+    "128": "icons/image.png"
+  },
+  
+  "background": {
+    "service_worker": "background.js"
+  }
+}

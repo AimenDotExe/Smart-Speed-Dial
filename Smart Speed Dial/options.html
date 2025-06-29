@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Extension Settings</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Smart Speed Dial Settings</h2>
+  <label>
+    <input type="checkbox" id="suggestToggle" />
+    Enable site suggestions from browser history
+  </label>
+
+  <script>
+    const toggle = document.getElementById('suggestToggle');
+
+    chrome.storage.sync.get(['useSuggestions'], result => {
+      toggle.checked = result.useSuggestions ?? true;
+    });
+
+    toggle.addEventListener('change', () => {
+      chrome.storage.sync.set({ useSuggestions: toggle.checked });
+    });
+  </script>
+</body>
+</html>

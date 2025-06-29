@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A beautiful, customizable speed dial new tab page with drag & drop functionality, bookmark import, and web search." />
+  <meta name="author" content="Aimen Zaied" />
+  <meta name="keywords" content="speed dial, new tab, bookmarks, chrome extension, customizable" />
+  
+  <title>Speed Dial - New Tab</title>
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="style.css" as="style" />
+  <link rel="preload" href="script.js" as="script" />
+</head>
+<body>
+  <!-- Search Bar -->
+  <div class="search-container" id="searchContainer" style="display: none;">
+    <div class="search-wrapper">
+      <div class="search-icon">🔍</div>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search the web..." />
+      <button class="search-clear" id="searchClear" style="display: none;">×</button>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid" id="dialGrid"></div>
+
+  <!-- Add Site Popup -->
+  <div id="popup" class="popup">
+    <button id="popupClose" class="popup-close">×</button>
+    
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Site Name</label>
+        <div class="input-with-color">
+          <input id="siteName" class="form-input" type="text" placeholder="Enter site name" />
+          <input id="siteColor" class="inline-color-picker" type="color" value="#667eea" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Website URL</label>
+        <input id="siteURL" class="form-input" type="text" placeholder="https://example.com" />
+      </div>
+
+      <div class="suggestions-section" id="suggestionsSection">
+        <div class="suggestions-header" id="suggestionsToggle">
+          <span class="suggestions-icon">+</span>
+          <span class="suggestions-title">Recent Sites</span>
+        </div>
+        <div class="suggestions-list" id="suggestions" style="display: none;"></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button id="popupAdd" class="btn btn-primary">Add Site</button>
+    </div>
+  </div>
+
+  <!-- Edit Site Popup -->
+  <div id="editPopup" class="popup edit-popup">
+    <button id="editPopupClose" class="popup-close">×</button>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Site Name</label>
+        <div class="input-with-color">
+          <input id="editSiteName" class="form-input" type="text" placeholder="Site name" />
+          <input id="editSiteColor" class="inline-color-picker" type="color" value="#667eea" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website URL</label>
+        <input id="editSiteURL" class="form-input" type="text" placeholder="https://example.com" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="editCancel" class="btn btn-secondary">Cancel</button>
+      <button id="editSave" class="btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Bookmark Folder Selection Popup -->
+  <div id="bookmarkFolderPopup" class="popup bookmark-folder-popup">
+    <button id="bookmarkFolderClose" class="popup-close">×</button>
+    <div class="modal-body">
+      <h3 class="folder-title">Select Bookmark Folders</h3>
+      <p class="folder-description">Choose which bookmark folders you want to import:</p>
+      <div class="folder-list" id="folderList"></div>
+    </div>
+    <div class="modal-actions">
+      <button id="bookmarkCancel" class="btn btn-secondary">Cancel</button>
+      <button id="bookmarkImport" class="btn btn-primary">Import Selected</button>
+    </div>
+  </div>
+
+  <!-- Settings Button -->
+  <button id="settingsBtn" class="settings-btn" title="Settings">⚙️</button>
+
+  <!-- Settings Popup -->
+  <div id="settingsPopup" class="settings-popup">
+    <div class="settings-header">
+      <h3 class="settings-title">Settings</h3>
+      <p class="settings-subtitle">Customize your Speed Dial experience</p>
+    </div>
+    
+    <label><input type="checkbox" id="toggleSuggestions" /> Enable site suggestions</label>
+    <label><input type="checkbox" id="toggleSearch" /> Show search bar</label>
+    
+    <div class="grid-section">
+      <label class="section-title">Grid Columns</label>
+      <div class="grid-controls">
+        <label class="grid-option">
+          <input type="radio" name="gridColumnsOption" id="gridColumns5" value="5" />
+          <span>5 Columns</span>
+        </label>
+        <label class="grid-option">
+          <input type="radio" name="gridColumnsOption" id="gridColumns6" value="6" />
+          <span>6 Columns</span>
+        </label>
+        <label class="grid-option">
+          <input type="radio" name="gridColumnsOption" id="gridColumns7" value="7" checked />
+          <span>7 Columns</span>
+        </label>
+        <label class="grid-option">
+          <input type="radio" name="gridColumnsOption" id="gridColumns8" value="8" />
+          <span>8 Columns</span>
+        </label>
+        <label class="grid-option">
+          <input type="radio" name="gridColumnsOption" id="gridColumns9" value="9" />
+          <span>9 Columns</span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="font-section">
+      <label class="section-title">Font Size</label>
+      <div class="font-controls">
+        <span class="font-label">Small</span>
+        <input type="range" id="fontSizeSlider" min="80" max="200" value="100" step="5" />
+        <span class="font-label">Large</span>
+        <span class="font-value" id="fontValue">100%</span>
+      </div>
+    </div>
+    
+    <div class="color-section">
+      <label class="section-title">Custom Colors</label>
+      <div class="color-inputs">
+        <div class="color-group">
+          <label>Top</label>
+          <input type="color" id="color1" value="#0d0d2b" />
+        </div>
+        <div class="color-group">
+          <label>Bottom</label>
+          <input type="color" id="color2" value="#000000" />
+        </div>
+      </div>
+    </div>
+    
+    <div class="separator"></div>
+    
+    <div class="presets">
+      <label class="section-title">Quick Presets</label>
+      <div class="preset-grid">
+        <div class="preset-sample" style="background: radial-gradient(ellipse at bottom, #0d0d2b, #000);" data-bg="0d0d2b,000000" title="Dark Blue"></div>
+        <div class="preset-sample" style="background: radial-gradient(ellipse at bottom, #1e3c72, #2a5298);" data-bg="1e3c72,2a5298" title="Ocean Blue"></div>
+        <div class="preset-sample" style="background: radial-gradient(ellipse at bottom, #42275a, #734b6d);" data-bg="42275a,734b6d" title="Purple Haze"></div>
+        <div class="preset-sample" style="background: radial-gradient(ellipse at bottom, #141e30, #243b55);" data-bg="141e30,243b55" title="Midnight"></div>
+      </div>
+    </div>
+    
+    <div class="separator"></div>
+    
+    <div class="data-section">
+      <label class="section-title">Data Management</label>
+      <div class="data-buttons">
+        <button id="importBookmarksBtn" class="data-btn bookmarks-btn">Import from Bookmarks</button>
+        <button id="exportBtn" class="data-btn">Export Sites</button>
+        <button id="importBtn" class="data-btn">Import Sites</button>
+        <input type="file" id="importFile" accept=".json" style="display: none;" />
+      </div>
+    </div>
+    
+    <div class="separator"></div>
+    
+    <div class="author-section">
+      <p class="author-info">
+        Created by <strong>Aimen Zaied</strong><br>
+        <a href="https://linktr.ee/AimenZaied" target="_blank" class="author-link">🔗 linktr.ee/AimenZaied</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <template id="card-template">
+    <div class="card">
+      <div class="card-favicon">
+        <img class="favicon-img" alt="Site icon" />
+        <span class="favicon-fallback"></span>
+      </div>
+      <div class="card-content">
+        <span class="card-title"></span>
+      </div>
+    </div>
+  </template>
+
+  <template id="add-template">
+    <div class="card add-card" id="addCard" title="Add new site">
+      <div class="add-icon">+</div>
+      <span class="add-text">Add Site</span>
+    </div>
+  </template>
+
+  <template id="folder-item-template">
+    <div class="folder-item">
+      <label class="folder-checkbox">
+        <input type="checkbox" class="folder-check" />
+        <span class="folder-name"></span>
+        <span class="folder-count"></span>
+      </label>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
