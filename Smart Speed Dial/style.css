@@ -997,9 +997,3 @@ input[type="range"]::-moz-range-thumb {
     transform: translateY(0) scale(1); 
   }
 }
-
-.fade-out {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.1s ease-out;
-}

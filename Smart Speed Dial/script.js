@@ -418,14 +418,7 @@ function renderSiteCard(site, index) {
   // Click to open site (only if not dragging)
   div.addEventListener('click', (e) => {
     if (!isDragging) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
-      document.body.classList.add('fade-out');
-
-      setTimeout(() => {
-        location.assign(site.url);
-      }, 75);
+      window.open(site.url, '_blank');
     }
   });
   
